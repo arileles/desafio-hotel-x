@@ -45,12 +45,13 @@ public class HospedeController {
     }
     @PostMapping
     public ResponseEntity<HospedeListagem> postHospede(@RequestBody Hospede hospede, UriComponentsBuilder uriComponentsBuilder){
-        Hospede salvo = hospedeRepository.save(hospede);
+        Hospede salvo = hospedeService.verificacaoCpf(hospede);
         URI uri = uriComponentsBuilder.path("hospede/{id}").buildAndExpand(salvo.getId()).toUri();
         return  ResponseEntity.created(uri).build();
     }
-    @DeleteMapping
-    public String deleteHospede() {
-        return "tchau";
+    @PutMapping
+    public ResponseEntity<HospedeListagem> putHospede(@RequestBody Hospede hospede){
+        Hospede hospedeEncontrado = hospedeService.atualizarHospede(hospede);
+        return ResponseEntity.ok(new HospedeListagem(hospedeEncontrado));
     }
 }

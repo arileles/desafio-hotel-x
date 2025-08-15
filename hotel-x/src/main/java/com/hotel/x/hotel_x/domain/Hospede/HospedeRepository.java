@@ -17,4 +17,6 @@ public interface HospedeRepository extends JpaRepository<Hospede, Long>
     Optional<Hospede> findByNome(String nome);
 
     Optional<Hospede> findByTelefone(String telefone);
+
+    boolean existsByCpf(String cpf);
 }

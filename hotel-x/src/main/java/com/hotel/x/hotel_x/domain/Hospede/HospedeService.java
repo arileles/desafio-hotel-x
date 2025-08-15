@@ -23,4 +23,28 @@ public class HospedeService {
         return hospedeRepository.findByTelefone(telefone)
                 .orElseThrow(() -> new HospedeNotFoundException(telefone));
     }
+
+    public Hospede atualizarHospede(Hospede hospede) {
+        Hospede salvo = findByDocumentoHospede(hospede.getCpf());
+
+        if (hospede.getNome() != null){
+             salvo.setNome(hospede.getNome());
+        }
+        if (hospede.getTelefone() != null){
+            salvo.setTelefone(hospede.getTelefone());
+        }
+        if (!hospede.getTelefone().matches("\\d{10,11}")) {
+            throw new IllegalArgumentException("O telefone deve conter 10 ou 11 dígitos numéricos");
+        }
+        hospedeRepository.save(salvo);
+
+        return salvo;
+    }
+
+    public Hospede verificacaoCpf(Hospede hospede) {
+        if (hospedeRepository.existsByCpf(hospede.getCpf())) {
+            throw new IllegalArgumentException("CPF já cadastrado");
+        }
+        return hospedeRepository.save(hospede);
+    }
 }
