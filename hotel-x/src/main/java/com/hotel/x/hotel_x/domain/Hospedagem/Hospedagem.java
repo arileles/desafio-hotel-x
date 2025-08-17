@@ -24,14 +24,14 @@ public class Hospedagem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_hospede")
     private Hospede hospede;
-    @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataEntrada;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime  dataSaida;
     @NotNull
-    private boolean adicionalVeiculo;
+    private Boolean adicionalVeiculo;
     @NotNull
     private Double valorTotal;
     private String observacoes;
+
 }
