@@ -29,4 +29,6 @@ public class Hospede {
             message = "O telefone deve conter 10 ou 11 dígitos numéricos"
     )
     private String telefone;
+    private Double valorTotalGasto;
+    private Double valorUltimaHospedagem;
 }

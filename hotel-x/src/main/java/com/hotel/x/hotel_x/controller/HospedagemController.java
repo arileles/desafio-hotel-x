@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 
 @RestController
@@ -45,7 +47,15 @@ public class HospedagemController {
                 .map(HospedagemListarDTO::new);
         return ResponseEntity.ok(dto);
     }
-
+    @GetMapping("/{cpf}")
+    public ResponseEntity<Stream<Object>> getHospedagemPorHospede(@PathVariable String cpf){
+        Stream<Object> dto =  hospedagemRepository.findAllByHospede_Cpf(cpf).stream().map(HospedagemListarDTO::new);
+        return ResponseEntity.ok(dto);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<HospedagemListarDTO> putHospedagemAtualizar(@PathVariable Long id, @RequestBody HospedagemEntradaDTO hospedagemEntradaDTO){
+        return ResponseEntity.ok(hospedagemService.atualizarHospedagem(hospedagemEntradaDTO, id));
+    }
 
 
 }

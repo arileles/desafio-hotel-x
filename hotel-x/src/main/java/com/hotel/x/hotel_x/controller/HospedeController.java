@@ -45,7 +45,7 @@ public class HospedeController {
     }
     @PostMapping
     public ResponseEntity<HospedeListagemDTO> postHospede(@RequestBody Hospede hospede, UriComponentsBuilder uriComponentsBuilder){
-        Hospede salvo = hospedeService.verificacaoCpf(hospede);
+        Hospede salvo = hospedeService.verificacaoHospede(hospede);
         URI uri = uriComponentsBuilder.path("hospede/{id}").buildAndExpand(salvo.getId()).toUri();
         return  ResponseEntity.created(uri).build();
     }

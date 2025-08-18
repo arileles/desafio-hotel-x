@@ -41,10 +41,11 @@ public class HospedeService {
         return salvo;
     }
 
-    public Hospede verificacaoCpf(Hospede hospede) {
+    public Hospede verificacaoHospede(Hospede hospede) {
         if (hospedeRepository.existsByCpf(hospede.getCpf())) {
             throw new IllegalArgumentException("CPF já cadastrado");
         }
+
         return hospedeRepository.save(hospede);
     }
 }

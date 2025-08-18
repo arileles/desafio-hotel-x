@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 @Setter
 public class HospedagemEntradaDTO {
     private String hospede;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm", timezone = "America/Sao_Paulo")
     private LocalDateTime dataEntrada;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm", timezone = "America/Sao_Paulo")
     private LocalDateTime  dataSaida;
     private boolean adicionalVeiculo;
     private Double valorTotal;
