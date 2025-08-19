@@ -15,14 +15,14 @@ import java.time.LocalDateTime;
 @Service
 public class HospedagemService {
     @Autowired
-    private HospedagemRepository hospedagemRepository;
+    HospedagemRepository hospedagemRepository;
     @Autowired
     private HospedeRepository hospedeRepository;
     @Autowired
     private CalculoHospedagemService calculoHospedagemService;
 
     public Page<Hospedagem> hospedesAtivos() {
-        Page<Hospedagem> hospedagensAtivas  = hospedagemRepository.findByDataSaidaIsNotNull(PageRequest.of(0, 10));
+        Page<Hospedagem> hospedagensAtivas  = hospedagemRepository.findByDataSaidaIsNull(PageRequest.of(0, 10));
         return hospedagensAtivas;
     }
 
@@ -38,7 +38,7 @@ public class HospedagemService {
     }
 
     public Hospedagem salvarHospedagem(HospedagemEntradaDTO hospedagem) {
-        Hospede hospede = hospedeRepository.findByCpf(hospedagem.getHospede().toString()).orElseThrow(() -> new RuntimeException("Hóspede não encontrado"));
+        Hospede hospede = hospedeRepository.findByCpf(hospedagem.getHospede()).orElseThrow(() -> new RuntimeException("Hóspede não encontrado"));
         Hospedagem hospedagemEntity = new Hospedagem();
 
         if (hospedagem.getDataSaida()!= null && hospedagem.getDataEntrada()== null){
@@ -63,7 +63,7 @@ public class HospedagemService {
     }
 
     public Page<Hospedagem> hospedesInativos() {
-        Page<Hospedagem> hospedagensInativas  = hospedagemRepository.findByDataSaidaIsNull(PageRequest.of(0, 10));
+        Page<Hospedagem> hospedagensInativas  = hospedagemRepository.findByDataSaidaIsNotNull(PageRequest.of(0, 10));
         return hospedagensInativas;
     }
 
@@ -98,5 +98,10 @@ public class HospedagemService {
         HospedagemListarDTO dto =  new HospedagemListarDTO(hospedagem);
         return dto;
 
+    }
+    public void excluirHospedagem(Long id) {
+        Hospedagem hospedagem = hospedagemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hospedagem não encontrada com o ID: " + id));
+        hospedagemRepository.delete(hospedagem);
     }
 }

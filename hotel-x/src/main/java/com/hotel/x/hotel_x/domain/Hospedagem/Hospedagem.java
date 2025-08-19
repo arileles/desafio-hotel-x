@@ -5,9 +5,7 @@ import com.hotel.x.hotel_x.domain.Hospede.Hospede;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity(name = "Hospedagem")

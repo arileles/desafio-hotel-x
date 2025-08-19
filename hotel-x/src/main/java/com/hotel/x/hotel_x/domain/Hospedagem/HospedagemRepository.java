@@ -20,6 +20,4 @@ public interface HospedagemRepository extends JpaRepository<Hospedagem, Long> {
     Page<Hospedagem> findByDataSaidaIsNull(PageRequest of);
 
     List<Hospedagem> findAllByHospede_Cpf(String cpf);
-
-    boolean findByDataEntradaIsNull();
 }

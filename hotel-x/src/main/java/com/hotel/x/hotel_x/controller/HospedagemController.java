@@ -56,6 +56,11 @@ public class HospedagemController {
     public ResponseEntity<HospedagemListarDTO> putHospedagemAtualizar(@PathVariable Long id, @RequestBody HospedagemEntradaDTO hospedagemEntradaDTO){
         return ResponseEntity.ok(hospedagemService.atualizarHospedagem(hospedagemEntradaDTO, id));
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteHospedagem(@PathVariable Long id) {
+        hospedagemService.excluirHospedagem(id);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }
