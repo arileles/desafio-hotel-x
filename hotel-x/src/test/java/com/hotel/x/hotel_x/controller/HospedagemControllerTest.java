@@ -41,7 +41,7 @@ class HospedagemControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void testGetHospedesAtivos() throws Exception {
+    void testBuscarHospedesAtivos() throws Exception {
         Hospede hospede = new Hospede();
         hospede.setCpf("12345678901");
 

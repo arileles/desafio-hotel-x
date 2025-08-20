@@ -18,39 +18,47 @@ import java.util.Optional;
 @RestController
 @RequestMapping("hospede")
 public class HospedeController {
+
     @Autowired
     private HospedeRepository hospedeRepository;
+
     @Autowired
     private HospedeService hospedeService;
+
     @GetMapping("/cpf/{cpf}")
-    public ResponseEntity<Optional<Object>> getHospedeByDocumento(@PathVariable String cpf) {
+    public ResponseEntity<Optional<Object>> buscarHospedePorDocumento(@PathVariable String cpf) {
         Hospede hospede = hospedeService.findByDocumentoHospede(cpf);
         return ResponseEntity.ok(Optional.of(new HospedeListagemDTO(hospede)));
     }
+
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<Optional<Object>> getHospedeByNome(@PathVariable String nome) {
+    public ResponseEntity<Optional<Object>> buscarHospedePorNome(@PathVariable String nome) {
         Hospede hospede = hospedeService.findByNomeHospede(nome);
         return ResponseEntity.ok(Optional.of(new HospedeListagemDTO(hospede)));
     }
+
     @GetMapping("/telefone/{telefone}")
-    public ResponseEntity<Optional<Object>> getHospedeByTelefone(@PathVariable String telefone) {
+    public ResponseEntity<Optional<Object>> buscarHospedePorTelefone(@PathVariable String telefone) {
         Hospede hospede = hospedeService.findByTelefoneHospede(telefone);
         return ResponseEntity.ok(Optional.of(new HospedeListagemDTO(hospede)));
     }
+
     @GetMapping()
-    public ResponseEntity<Page<HospedeListagemDTO>> getAllHospedes(@PageableDefault(size = 10, sort = "nome") Pageable pageable) {
+    public ResponseEntity<Page<HospedeListagemDTO>> buscarTodosOsHospedes(@PageableDefault(size = 10, sort = "nome") Pageable pageable) {
         var hospedes  = hospedeRepository.findAll(pageable);
         Page<HospedeListagemDTO> dto = hospedes.map(HospedeListagemDTO::new);
         return ResponseEntity.ok(dto);
     }
+
     @PostMapping
-    public ResponseEntity<HospedeListagemDTO> postHospede(@RequestBody Hospede hospede, UriComponentsBuilder uriComponentsBuilder){
-        Hospede salvo = hospedeService.verificacaoHospede(hospede);
+    public ResponseEntity<HospedeListagemDTO> criarHospede(@RequestBody Hospede hospede, UriComponentsBuilder uriComponentsBuilder){
+        Hospede salvo = hospedeService.verificarHospede(hospede);
         URI uri = uriComponentsBuilder.path("hospede/{id}").buildAndExpand(salvo.getId()).toUri();
         return  ResponseEntity.created(uri).build();
     }
+
     @PutMapping
-    public ResponseEntity<HospedeListagemDTO> putHospede(@RequestBody Hospede hospede){
+    public ResponseEntity<HospedeListagemDTO> atualizarHospede(@RequestBody Hospede hospede){
         Hospede hospedeEncontrado = hospedeService.atualizarHospede(hospede);
         return ResponseEntity.ok(new HospedeListagemDTO(hospedeEncontrado));
     }

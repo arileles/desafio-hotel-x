@@ -5,6 +5,7 @@ import com.hotel.x.hotel_x.domain.Hospede.Hospede;
 import com.hotel.x.hotel_x.domain.Hospede.HospedeRepository;
 
 import com.hotel.x.hotel_x.domain.Hospedagem.dto.HospedagemEntradaDTO;
+import com.hotel.x.hotel_x.domain.Hospede.HospedeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,16 +15,18 @@ import java.time.LocalDateTime;
 
 @Service
 public class HospedagemService {
+
     @Autowired
     HospedagemRepository hospedagemRepository;
+
     @Autowired
-    private HospedeRepository hospedeRepository;
+    HospedeService hospedeService;
+
     @Autowired
     private CalculoHospedagemService calculoHospedagemService;
 
     public Page<Hospedagem> hospedesAtivos() {
-        Page<Hospedagem> hospedagensAtivas  = hospedagemRepository.findByDataSaidaIsNull(PageRequest.of(0, 10));
-        return hospedagensAtivas;
+        return hospedagemRepository.findByDataSaidaIsNull(PageRequest.of(0, 10));
     }
 
     public HospedagemEntradaDTO conferirHospedagem(HospedagemEntradaDTO hospedagem) {
@@ -38,21 +41,26 @@ public class HospedagemService {
     }
 
     public Hospedagem salvarHospedagem(HospedagemEntradaDTO hospedagem) {
-        Hospede hospede = hospedeRepository.findByCpf(hospedagem.getHospede()).orElseThrow(() -> new RuntimeException("Hóspede não encontrado"));
+        Hospede hospede = hospedeService.findByDocumentoHospede(hospedagem.getHospede());
         Hospedagem hospedagemEntity = new Hospedagem();
 
         if (hospedagem.getDataSaida()!= null && hospedagem.getDataEntrada()== null){
             throw new RuntimeException("Favor adicionar uma data de entrada para ser possível adicionar uma saída");
         }
+
         if (hospedagem.getDataSaida()!= null && hospedagem.getDataSaida().isBefore(hospedagem.getDataEntrada())){
             throw new RuntimeException("Favor adicionar uma data de entrada anterior a data de saída");
         }
-        hospedagemEntity.setHospede(hospede);
-        hospedagemEntity.setDataEntrada(hospedagem.getDataEntrada());
-        hospedagemEntity.setDataSaida(hospedagem.getDataSaida());
-        hospedagemEntity.setAdicionalVeiculo(hospedagem.isAdicionalVeiculo());
-        hospedagemEntity.setValorTotal(hospedagem.getValorTotal());
-        hospedagemEntity.setObservacoes(hospedagem.getObservacoes());
+
+         hospedagemEntity = Hospedagem.builder()
+                .hospede(hospede)
+                .dataEntrada(hospedagem.getDataEntrada())
+                .dataSaida(hospedagem.getDataSaida())
+                .adicionalVeiculo(hospedagem.isAdicionalVeiculo())
+                .valorTotal(hospedagem.getValorTotal())
+                .observacoes(hospedagem.getObservacoes())
+                .build();
+
         hospedagemRepository.save(hospedagemEntity);
 
         if (hospedagem.getDataEntrada()!= null && hospedagem.getDataSaida()!= null){
@@ -63,42 +71,58 @@ public class HospedagemService {
     }
 
     public Page<Hospedagem> hospedesInativos() {
-        Page<Hospedagem> hospedagensInativas  = hospedagemRepository.findByDataSaidaIsNotNull(PageRequest.of(0, 10));
-        return hospedagensInativas;
+        return hospedagemRepository.findByDataSaidaIsNotNull(PageRequest.of(0, 10));
     }
 
     public HospedagemListarDTO atualizarHospedagem(HospedagemEntradaDTO hospedagemEntradaDTO, Long id) {
-        Hospedagem hospedagem =  hospedagemRepository.findById(id).orElseThrow(()-> new RuntimeException("Não existe hospedagem com esse número"));
+        Hospedagem hospedagem = hospedagemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Não existe hospedagem com esse número"));
 
-        if (hospedagemEntradaDTO.getDataSaida()!= null &&( hospedagem.getDataEntrada() == null && hospedagemEntradaDTO.getDataEntrada() == null)){
-            throw new RuntimeException("Favor adicionar uma data de entrada para ser possível adicionar uma saída");
-        }
-        if (hospedagemEntradaDTO.getDataSaida()!= null && (hospedagemEntradaDTO.getDataSaida().isBefore(hospedagem.getDataEntrada()) && hospedagemEntradaDTO.getDataSaida().isBefore(hospedagemEntradaDTO.getDataEntrada()))){
-            throw new RuntimeException("Favor adicionar uma data de entrada anterior a data de saída");
-        }
+        validarEntradaESaida(hospedagemEntradaDTO, hospedagem);
         hospedagemEntradaDTO = conferirHospedagem(hospedagemEntradaDTO);
 
-        if (hospedagemEntradaDTO.isAdicionalVeiculo()){
-            hospedagem.setAdicionalVeiculo(hospedagemEntradaDTO.isAdicionalVeiculo());
-        }
-        if (hospedagemEntradaDTO.getDataEntrada()!= null){
-            hospedagem.setDataEntrada(hospedagemEntradaDTO.getDataEntrada());
-        }
-        if (hospedagemEntradaDTO.getDataSaida()!= null){
-            hospedagem.setDataSaida(hospedagemEntradaDTO.getDataSaida());
-        }
-        if (hospedagemEntradaDTO.getObservacoes()!= null){
-            hospedagem.setObservacoes(hospedagemEntradaDTO.getObservacoes());
+        atualizarCamposHospedagem(hospedagem, hospedagemEntradaDTO);
+        atualizarValorTotalSeNecessario(hospedagem, hospedagemEntradaDTO);
+
+        hospedagemRepository.save(hospedagem);
+
+        return new HospedagemListarDTO(hospedagem);
+    }
+
+    private void validarEntradaESaida(HospedagemEntradaDTO dto, Hospedagem hospedagem) {
+        if (dto.getDataSaida() != null && (hospedagem.getDataEntrada() == null && dto.getDataEntrada() == null)) {
+            throw new RuntimeException("Favor adicionar uma data de entrada para ser possível adicionar uma saída");
         }
 
-        if (hospedagem.getDataEntrada()!= hospedagemEntradaDTO.getDataEntrada() || hospedagem.getDataSaida()!= hospedagemEntradaDTO.getDataSaida()){
+        if (dto.getDataSaida() != null &&
+                (dto.getDataSaida().isBefore(hospedagem.getDataEntrada()) &&
+                        dto.getDataSaida().isBefore(dto.getDataEntrada()))) {
+            throw new RuntimeException("Favor adicionar uma data de entrada anterior a data de saída");
+        }
+    }
+
+    private void atualizarCamposHospedagem(Hospedagem hospedagem, HospedagemEntradaDTO dto) {
+        if (dto.isAdicionalVeiculo()) {
+            hospedagem.setAdicionalVeiculo(dto.isAdicionalVeiculo());
+        }
+        if (dto.getDataEntrada() != null) {
+            hospedagem.setDataEntrada(dto.getDataEntrada());
+        }
+        if (dto.getDataSaida() != null) {
+            hospedagem.setDataSaida(dto.getDataSaida());
+        }
+        if (dto.getObservacoes() != null) {
+            hospedagem.setObservacoes(dto.getObservacoes());
+        }
+    }
+
+    private void atualizarValorTotalSeNecessario(Hospedagem hospedagem, HospedagemEntradaDTO dto) {
+        if (hospedagem.getDataEntrada() != dto.getDataEntrada() ||
+                hospedagem.getDataSaida() != dto.getDataSaida()) {
             hospedagem.setValorTotal(calculoHospedagemService.calcular(hospedagem));
         }
-        hospedagemRepository.save(hospedagem);
-        HospedagemListarDTO dto =  new HospedagemListarDTO(hospedagem);
-        return dto;
-
     }
+
     public void excluirHospedagem(Long id) {
         Hospedagem hospedagem = hospedagemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Hospedagem não encontrada com o ID: " + id));

@@ -30,18 +30,20 @@ public class HospedeService {
         if (hospede.getNome() != null){
              salvo.setNome(hospede.getNome());
         }
+
         if (hospede.getTelefone() != null){
             salvo.setTelefone(hospede.getTelefone());
         }
+
         if (!hospede.getTelefone().matches("\\d{10,11}")) {
             throw new IllegalArgumentException("O telefone deve conter 10 ou 11 dígitos numéricos");
         }
-        hospedeRepository.save(salvo);
 
+        hospedeRepository.save(salvo);
         return salvo;
     }
 
-    public Hospede verificacaoHospede(Hospede hospede) {
+    public Hospede verificarHospede(Hospede hospede) {
         if (hospedeRepository.existsByCpf(hospede.getCpf())) {
             throw new IllegalArgumentException("CPF já cadastrado");
         }

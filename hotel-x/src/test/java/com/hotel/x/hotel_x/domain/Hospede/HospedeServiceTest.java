@@ -3,30 +3,25 @@ package com.hotel.x.hotel_x.domain.Hospede;
 import com.hotel.x.hotel_x.domain.Hospede.exceptions.HospedeNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class HospedeServiceTest {
 
+    @Mock
     private HospedeRepository hospedeRepository;
-    private HospedeService hospedeService;
 
-    @BeforeEach
-    void setUp() {
-        hospedeRepository = Mockito.mock(HospedeRepository.class);
-        hospedeService = new HospedeService();
-        // Injeta o mock via reflexão
-        try {
-            var field = HospedeService.class.getDeclaredField("hospedeRepository");
-            field.setAccessible(true);
-            field.set(hospedeService, hospedeRepository);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    @InjectMocks
+    private HospedeService hospedeService;
 
     @Test
     void testFindByDocumentoHospedeSucesso() {
@@ -89,7 +84,7 @@ class HospedeServiceTest {
         Hospede hospede = new Hospede(null, "João", "12345678901", "11999999999", 0.0, 0.0);
         Mockito.when(hospedeRepository.existsByCpf("12345678901")).thenReturn(true);
 
-        assertThrows(IllegalArgumentException.class, () -> hospedeService.verificacaoHospede(hospede));
+        assertThrows(IllegalArgumentException.class, () -> hospedeService.verificarHospede(hospede));
     }
 
     @Test
@@ -98,7 +93,7 @@ class HospedeServiceTest {
         Mockito.when(hospedeRepository.existsByCpf("12345678901")).thenReturn(false);
         Mockito.when(hospedeRepository.save(hospede)).thenReturn(hospede);
 
-        Hospede result = hospedeService.verificacaoHospede(hospede);
+        Hospede result = hospedeService.verificarHospede(hospede);
         assertEquals("João", result.getNome());
     }
 

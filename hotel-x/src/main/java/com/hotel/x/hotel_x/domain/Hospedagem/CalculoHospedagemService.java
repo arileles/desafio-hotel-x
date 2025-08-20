@@ -55,7 +55,6 @@ public class CalculoHospedagemService {
                 if (usaGaragem) total += GARAGEM_DIA_UTIL;
             }
         }
-
         return total;
     }
 }

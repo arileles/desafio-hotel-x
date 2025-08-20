@@ -1,20 +1,23 @@
 package com.hotel.x.hotel_x.domain.Hospedagem;
 
-import com.hotel.x.hotel_x.controller.HospedeController;
 import com.hotel.x.hotel_x.domain.Hospedagem.dto.HospedagemEntradaDTO;
 import com.hotel.x.hotel_x.domain.Hospedagem.dto.HospedagemListarDTO;
 import com.hotel.x.hotel_x.domain.Hospede.Hospede;
 import com.hotel.x.hotel_x.domain.Hospede.HospedeRepository;
+import com.hotel.x.hotel_x.domain.Hospede.HospedeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -23,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class HospedagemServiceTest {
 
     @Mock
@@ -30,26 +34,17 @@ class HospedagemServiceTest {
 
     @InjectMocks
     private HospedagemService hospedagemService;
-    @InjectMocks
-    private HospedeRepository hospedeRepository;
 
-    @BeforeEach
-    void setUp() throws Exception {
-        hospedagemRepository = Mockito.mock(HospedagemRepository.class);
-        hospedeRepository = Mockito.mock(HospedeRepository.class); // Adicionado mock do hospedeRepository
-        hospedagemService = new HospedagemService();
-        // Se hospedagemRepository for privado, use reflexão para setar
-        Field repoField = HospedagemService.class.getDeclaredField("hospedagemRepository");
-        repoField.setAccessible(true);
-        repoField.set(hospedagemService, hospedagemRepository);
-        Field repo1Field = HospedagemService.class.getDeclaredField("hospedeRepository");
-        repo1Field.setAccessible(true);
-        repo1Field.set(hospedagemService, hospedeRepository);
-    }
+    @Mock
+    private HospedeService hospedeService;
+
+    @Mock
+    private CalculoHospedagemService calculoHospedagemService;
 
     @Test
     void testSalvarHospedagem() {
         HospedagemEntradaDTO dto = new HospedagemEntradaDTO();
+
         Hospede hospede = new Hospede();
         hospede.setCpf("12345678901");
         dto.setHospede(hospede.getCpf());
@@ -60,7 +55,7 @@ class HospedagemServiceTest {
         hospedagemSalva.setId(1L);
         hospedagemSalva.setHospede(hospede);
 
-        Mockito.when(hospedeRepository.findByCpf(hospede.getCpf())).thenReturn(Optional.of(hospede));
+        Mockito.when(hospedeService.findByDocumentoHospede(hospede.getCpf())).thenReturn(hospede);
         Mockito.when(hospedagemRepository.save(Mockito.any(Hospedagem.class)))
                 .thenAnswer(invocation -> {
                     Hospedagem arg = invocation.getArgument(0);
@@ -104,17 +99,55 @@ class HospedagemServiceTest {
         Hospedagem hospedagem = new Hospedagem();
         hospedagem.setId(1L);
         hospedagem.setDataEntrada(LocalDateTime.now().minusDays(1));
+
         Hospede hospede = new Hospede();
         hospede.setCpf("12345678901");
         hospedagem.setHospede(hospede);
         hospedagem.setAdicionalVeiculo(false);
+
         Page<Hospedagem> page = new PageImpl<>(Collections.singletonList(hospedagem));
         Mockito.when(hospedagemRepository.findByDataSaidaIsNull(any(PageRequest.class))).thenReturn(page);
 
         Page<Hospedagem> result = hospedagemService.hospedesAtivos();
         assertNotNull(result);
         assertEquals(1, result.getTotalElements(), "Deve retornar 1 para hóspedes ativos");
-        }
+    }
+
+    @Test
+    void testConferirHospedagemDataSaidaFutura() {
+        HospedagemEntradaDTO dto = new HospedagemEntradaDTO();
+        dto.setDataSaida(LocalDateTime.now().plusDays(1));
+
+        assertThrows(RuntimeException.class, () -> hospedagemService.conferirHospedagem(dto));
+    }
+
+    @Test
+    void testConferirHospedagemDataEntradaFutura() {
+        HospedagemEntradaDTO dto = new HospedagemEntradaDTO();
+        dto.setDataEntrada(LocalDateTime.now().plusDays(1));
+
+        assertThrows(RuntimeException.class, () -> hospedagemService.conferirHospedagem(dto));
+    }
+
+    @Test
+    void testAtualizarValorTotalSeNecessarioQuandoDatasMudam() throws Exception {
+        HospedagemEntradaDTO dto = new HospedagemEntradaDTO();
+        dto.setDataEntrada(LocalDateTime.now().minusDays(5));
+        dto.setDataSaida(LocalDateTime.now().minusDays(1));
+
+        Hospedagem hospedagem = new Hospedagem();
+        hospedagem.setDataEntrada(LocalDateTime.now().minusDays(10));
+        hospedagem.setDataSaida(LocalDateTime.now().minusDays(7));
+
+        Mockito.when(calculoHospedagemService.calcular(any(Hospedagem.class))).thenReturn(300.0);
+
+        Method method = HospedagemService.class.getDeclaredMethod("atualizarValorTotalSeNecessario", Hospedagem.class, HospedagemEntradaDTO.class);
+        method.setAccessible(true);
+        method.invoke(hospedagemService, hospedagem, dto);
+
+        verify(calculoHospedagemService, times(1)).calcular(hospedagem);
+        assertEquals(300.0, hospedagem.getValorTotal());
+    }
 
     @Test
     void testHospedesInativos() {
@@ -134,7 +167,6 @@ class HospedagemServiceTest {
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
     }
-
 
     @Test
     void testExcluirHospedagemSucesso() {

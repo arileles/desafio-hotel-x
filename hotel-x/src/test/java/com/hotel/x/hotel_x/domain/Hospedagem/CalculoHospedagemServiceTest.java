@@ -1,23 +1,21 @@
 package com.hotel.x.hotel_x.domain.Hospedagem;
 
-import com.hotel.x.hotel_x.domain.Hospedagem.CalculoHospedagemService;
-import com.hotel.x.hotel_x.domain.Hospedagem.Hospedagem;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(MockitoExtension.class)
 class CalculoHospedagemServiceTest {
 
+    @InjectMocks
     private CalculoHospedagemService service;
-
-    @BeforeEach
-    void setUp() {
-        service = new CalculoHospedagemService();
-    }
 
     @Test
     void calculaDiariaDiaUtilSemGaragem() {

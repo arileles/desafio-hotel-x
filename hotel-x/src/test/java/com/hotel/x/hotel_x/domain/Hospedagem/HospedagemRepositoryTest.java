@@ -61,6 +61,7 @@ class HospedagemRepositoryTest {
         assertFalse(result.isEmpty());
         assertEquals("Busca CPF", result.get(0).getObservacoes());
     }
+
     @Test
     @DisplayName("Deve buscar hospedagens pelo CPF do hóspede, porém o CPF cadastrado não segue o padrão brasileiro")
     void testFindAllByHospedeCpfErrado() {

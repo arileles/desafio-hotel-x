@@ -15,7 +15,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Table(name = "hospedagem")
+@Builder
 public class Hospedagem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,5 +33,4 @@ public class Hospedagem {
     @NotNull
     private Double valorTotal;
     private String observacoes;
-
 }

@@ -67,5 +67,4 @@ class HospedeRepositoryTest {
             hospedeRepository.saveAndFlush(hospede);
         });
     }
-
 }
