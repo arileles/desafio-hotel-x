@@ -30,7 +30,6 @@ public class Hospedagem {
     private LocalDateTime  dataSaida;
     @NotNull
     private Boolean adicionalVeiculo;
-    @NotNull
     private Double valorTotal;
     private String observacoes;
 }

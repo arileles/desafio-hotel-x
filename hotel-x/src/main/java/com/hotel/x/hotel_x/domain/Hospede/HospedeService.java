@@ -1,11 +1,15 @@
 package com.hotel.x.hotel_x.domain.Hospede;
+import com.hotel.x.hotel_x.domain.Hospede.dto.HospedeEntradaDTO;
+import com.hotel.x.hotel_x.domain.Hospede.dto.HospedeListagemDTO;
 import com.hotel.x.hotel_x.domain.Hospede.exceptions.HospedeNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class HospedeService {
+
     @Autowired
     private HospedeRepository hospedeRepository;
 
@@ -43,11 +47,28 @@ public class HospedeService {
         return salvo;
     }
 
-    public Hospede verificarHospede(Hospede hospede) {
+    public Hospede verificarHospede(HospedeEntradaDTO hospede) {
         if (hospedeRepository.existsByCpf(hospede.getCpf())) {
             throw new IllegalArgumentException("CPF já cadastrado");
         }
 
-        return hospedeRepository.save(hospede);
+        Hospede hospedeEntity = Hospede.builder()
+                .cpf(hospede.getCpf())
+                .nome(hospede.getNome())
+                .telefone(hospede.getTelefone())
+                .build();
+
+        return hospedeRepository.save(hospedeEntity);
+    }
+
+    public void deletarHospede(Long id) {
+        Hospede hospede = hospedeRepository.findById(id).orElseThrow(() -> new HospedeNotFoundException("Hospede com ID " + id + " não encontrado"));
+        hospedeRepository.delete(hospede);
+    }
+
+    public Page<HospedeListagemDTO> buscarTodosOsHospedes(Pageable pageable) {
+        var hospedes  = hospedeRepository.findAll(pageable);
+        Page<HospedeListagemDTO> dto = hospedes.map(HospedeListagemDTO::new);
+        return dto;
     }
 }

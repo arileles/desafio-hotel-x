@@ -2,7 +2,6 @@ package com.hotel.x.hotel_x.domain.Hospedagem;
 
 import com.hotel.x.hotel_x.domain.Hospedagem.dto.HospedagemListarDTO;
 import com.hotel.x.hotel_x.domain.Hospede.Hospede;
-import com.hotel.x.hotel_x.domain.Hospede.HospedeRepository;
 
 import com.hotel.x.hotel_x.domain.Hospedagem.dto.HospedagemEntradaDTO;
 import com.hotel.x.hotel_x.domain.Hospede.HospedeService;
@@ -57,17 +56,30 @@ public class HospedagemService {
                 .dataEntrada(hospedagem.getDataEntrada())
                 .dataSaida(hospedagem.getDataSaida())
                 .adicionalVeiculo(hospedagem.isAdicionalVeiculo())
-                .valorTotal(hospedagem.getValorTotal())
                 .observacoes(hospedagem.getObservacoes())
                 .build();
 
-        hospedagemRepository.save(hospedagemEntity);
-
         if (hospedagem.getDataEntrada()!= null && hospedagem.getDataSaida()!= null){
-            hospedagem.setValorTotal(calculoHospedagemService.calcular(hospedagemEntity));
+            Double calculoHospedagem = calculoHospedagemService.calcular(hospedagemEntity);
+            hospedagemEntity.setValorTotal(calculoHospedagem);
+            atualizarValoresHospede(hospede, calculoHospedagem);
         }
 
+        hospedagemRepository.save(hospedagemEntity);
+
         return hospedagemEntity;
+    }
+
+    private void atualizarValoresHospede(Hospede hospede, Double calculoHospedagem) {
+        Double valorAtual = hospede.getValorTotalGasto();
+
+        if (valorAtual == null) {
+            valorAtual = 0.0;
+        }
+
+        hospede.setValorTotalGasto(valorAtual+calculoHospedagem);
+        hospede.setValorUltimaHospedagem(calculoHospedagem);
+        hospedeService.atualizarHospede(hospede);
     }
 
     public Page<Hospedagem> hospedesInativos() {
@@ -103,7 +115,7 @@ public class HospedagemService {
 
     private void atualizarCamposHospedagem(Hospedagem hospedagem, HospedagemEntradaDTO dto) {
         if (dto.isAdicionalVeiculo()) {
-            hospedagem.setAdicionalVeiculo(dto.isAdicionalVeiculo());
+            hospedagem.setAdicionalVeiculo(true);
         }
         if (dto.getDataEntrada() != null) {
             hospedagem.setDataEntrada(dto.getDataEntrada());
@@ -117,9 +129,11 @@ public class HospedagemService {
     }
 
     private void atualizarValorTotalSeNecessario(Hospedagem hospedagem, HospedagemEntradaDTO dto) {
-        if (hospedagem.getDataEntrada() != dto.getDataEntrada() ||
-                hospedagem.getDataSaida() != dto.getDataSaida()) {
-            hospedagem.setValorTotal(calculoHospedagemService.calcular(hospedagem));
+        if (hospedagem.getDataEntrada() != dto.getDataEntrada() || hospedagem.getDataSaida() != dto.getDataSaida()) {
+            Double calculoHospedagem = calculoHospedagemService.calcular(hospedagem);
+            hospedagem.setValorTotal(calculoHospedagem);
+            Hospede hospede = hospedeService.findByDocumentoHospede(hospedagem.getHospede().getCpf());
+            atualizarValoresHospede(hospede, calculoHospedagem);
         }
     }
 

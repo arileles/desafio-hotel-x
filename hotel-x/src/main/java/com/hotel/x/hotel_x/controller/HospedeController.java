@@ -3,6 +3,7 @@ package com.hotel.x.hotel_x.controller;
 import com.hotel.x.hotel_x.domain.Hospede.Hospede;
 import com.hotel.x.hotel_x.domain.Hospede.HospedeRepository;
 import com.hotel.x.hotel_x.domain.Hospede.HospedeService;
+import com.hotel.x.hotel_x.domain.Hospede.dto.HospedeEntradaDTO;
 import com.hotel.x.hotel_x.domain.Hospede.dto.HospedeListagemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,13 +46,11 @@ public class HospedeController {
 
     @GetMapping()
     public ResponseEntity<Page<HospedeListagemDTO>> buscarTodosOsHospedes(@PageableDefault(size = 10, sort = "nome") Pageable pageable) {
-        var hospedes  = hospedeRepository.findAll(pageable);
-        Page<HospedeListagemDTO> dto = hospedes.map(HospedeListagemDTO::new);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(hospedeService.buscarTodosOsHospedes(pageable));
     }
 
     @PostMapping
-    public ResponseEntity<HospedeListagemDTO> criarHospede(@RequestBody Hospede hospede, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity<HospedeListagemDTO> criarHospede(@RequestBody HospedeEntradaDTO hospede, UriComponentsBuilder uriComponentsBuilder){
         Hospede salvo = hospedeService.verificarHospede(hospede);
         URI uri = uriComponentsBuilder.path("hospede/{id}").buildAndExpand(salvo.getId()).toUri();
         return  ResponseEntity.created(uri).build();
@@ -61,5 +60,11 @@ public class HospedeController {
     public ResponseEntity<HospedeListagemDTO> atualizarHospede(@RequestBody Hospede hospede){
         Hospede hospedeEncontrado = hospedeService.atualizarHospede(hospede);
         return ResponseEntity.ok(new HospedeListagemDTO(hospedeEncontrado));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarHospede(@PathVariable Long id) {
+        hospedeService.deletarHospede(id);
+        return ResponseEntity.noContent().build();
     }
 }

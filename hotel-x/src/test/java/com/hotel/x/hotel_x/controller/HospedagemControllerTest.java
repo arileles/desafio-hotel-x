@@ -45,11 +45,11 @@ class HospedagemControllerTest {
         Hospede hospede = new Hospede();
         hospede.setCpf("12345678901");
 
-        Hospedagem hospedagem = new Hospedagem();
-        hospedagem.setId(1L);
-        hospedagem.setDataEntrada(LocalDateTime.now());
-        hospedagem.setAdicionalVeiculo(false);
-        hospedagem.setHospede(hospede);
+        Hospedagem hospedagem = Hospedagem.builder()
+                .id(1L)
+                .dataEntrada(LocalDateTime.now())
+                .adicionalVeiculo(false)
+                .hospede(hospede).build();
 
         Page<Hospedagem> page = new PageImpl<>(List.of(hospedagem));
 
@@ -67,12 +67,13 @@ class HospedagemControllerTest {
         Hospede hospede = new Hospede();
         hospede.setCpf("12345678901");
 
-        Hospedagem hospedagem = new Hospedagem();
-        hospedagem.setId(2L);
-        hospedagem.setDataEntrada(LocalDateTime.now().minusDays(2));
-        hospedagem.setDataSaida(LocalDateTime.now());
-        hospedagem.setAdicionalVeiculo(true);
-        hospedagem.setHospede(hospede);
+        Hospedagem hospedagem = Hospedagem.builder()
+        .id(2L)
+        .dataEntrada(LocalDateTime.now().minusDays(2))
+        .dataSaida(LocalDateTime.now())
+        .adicionalVeiculo(true)
+        .hospede(hospede).build();
+
         Page<Hospedagem> page = new PageImpl<>(Collections.singletonList(hospedagem));
         Mockito.when(hospedagemService.hospedesInativos()).thenReturn(page);
 
@@ -97,10 +98,11 @@ class HospedagemControllerTest {
 
     @Test
     void testPostHospedagem() throws Exception {
-        HospedagemEntradaDTO dto = new HospedagemEntradaDTO();
-        dto.setHospede("12345678901");
-        dto.setDataEntrada(LocalDateTime.now());
-        dto.setAdicionalVeiculo(false);
+        HospedagemEntradaDTO dto = HospedagemEntradaDTO.builder()
+                .hospede("12345678901")
+                .dataEntrada(LocalDateTime.now())
+                .adicionalVeiculo(false)
+                .build();
 
         Hospedagem hospedagemSalva = new Hospedagem();
         hospedagemSalva.setId(4L);
@@ -114,19 +116,19 @@ class HospedagemControllerTest {
 
     @Test
     void testPutHospedagemAtualizar() throws Exception {
-        Hospede hospede = new Hospede();
-        hospede.setCpf("12345678900");
-        hospede.setNome("Fulano de Tal");
-        hospede.setTelefone("11999999999");
+        Hospede hospede = Hospede.builder()
+                .cpf("12345678900")
+                .nome("Fulano de Tal")
+                .telefone("11999999999").build();
 
-        Hospedagem hospedagem = new Hospedagem();
-        hospedagem.setHospede(hospede);
-        hospedagem.setId(5L);
-        hospedagem.setDataEntrada(LocalDateTime.of(2025, 8, 19, 17, 31));
-        hospedagem.setAdicionalVeiculo(true);
-        hospedagem.setValorTotal(100.0);
-        hospedagem.setObservacoes("Observações de teste");
-        hospedagem.setDataSaida(LocalDateTime.of(2025, 8, 20, 17, 31));
+        Hospedagem hospedagem = Hospedagem.builder()
+                .hospede(hospede)
+                .id(5L)
+                .dataEntrada(LocalDateTime.of(2025, 8, 19, 17, 31))
+                .adicionalVeiculo(true)
+                .valorTotal(100.0)
+                .observacoes("Observações de teste")
+                .dataSaida(LocalDateTime.of(2025, 8, 20, 17, 31)).build();
 
         Mockito.when(hospedagemService.atualizarHospedagem(any(HospedagemEntradaDTO.class), eq(1L)))
                 .thenReturn(new HospedagemListarDTO(hospedagem));

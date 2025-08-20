@@ -14,6 +14,7 @@ import org.hibernate.validator.constraints.br.CPF;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Table(name = "hospede")
+@Builder
 public class Hospede {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -43,17 +43,13 @@ class HospedagemServiceTest {
 
     @Test
     void testSalvarHospedagem() {
-        HospedagemEntradaDTO dto = new HospedagemEntradaDTO();
-
         Hospede hospede = new Hospede();
         hospede.setCpf("12345678901");
-        dto.setHospede(hospede.getCpf());
-        dto.setDataEntrada(LocalDateTime.now());
-        dto.setAdicionalVeiculo(false);
 
-        Hospedagem hospedagemSalva = new Hospedagem();
-        hospedagemSalva.setId(1L);
-        hospedagemSalva.setHospede(hospede);
+        HospedagemEntradaDTO dto = HospedagemEntradaDTO.builder()
+                .dataEntrada(LocalDateTime.now())
+                .adicionalVeiculo(false)
+                .hospede(hospede.getCpf()).build();
 
         Mockito.when(hospedeService.findByDocumentoHospede(hospede.getCpf())).thenReturn(hospede);
         Mockito.when(hospedagemRepository.save(Mockito.any(Hospedagem.class)))
@@ -72,19 +68,22 @@ class HospedagemServiceTest {
 
     @Test
     void testAtualizarHospedagem() {
-        HospedagemEntradaDTO dto = new HospedagemEntradaDTO();
-        dto.setDataEntrada(LocalDateTime.now().minusDays(1));
-        dto.setDataSaida(LocalDateTime.now());
-        dto.setAdicionalVeiculo(false);
-
-        Hospedagem hospedagem = new Hospedagem();
-        hospedagem.setId(1L);
-        hospedagem.setDataEntrada(dto.getDataEntrada());
-        hospedagem.setAdicionalVeiculo(dto.isAdicionalVeiculo());
+        HospedagemEntradaDTO dto = HospedagemEntradaDTO.builder()
+                .dataEntrada(LocalDateTime.now().minusDays(1))
+                .dataSaida(LocalDateTime.now())
+                .adicionalVeiculo(false)
+                .build();
 
         Hospede hospede = new Hospede();
         hospede.setCpf("12345678901");
-        hospedagem.setHospede(hospede);
+
+        Hospedagem hospedagem = Hospedagem.builder().
+                id(1L)
+                .dataEntrada(dto.getDataEntrada())
+                .hospede(hospede)
+                .adicionalVeiculo(dto.isAdicionalVeiculo())
+                .build();
+
 
         Mockito.when(hospedagemRepository.findById(1L)).thenReturn(java.util.Optional.of(hospedagem));
         Mockito.when(hospedagemRepository.save(any(Hospedagem.class))).thenReturn(hospedagem);
@@ -96,14 +95,15 @@ class HospedagemServiceTest {
 
     @Test
     void testHospedesAtivos() {
-        Hospedagem hospedagem = new Hospedagem();
-        hospedagem.setId(1L);
-        hospedagem.setDataEntrada(LocalDateTime.now().minusDays(1));
-
         Hospede hospede = new Hospede();
         hospede.setCpf("12345678901");
-        hospedagem.setHospede(hospede);
-        hospedagem.setAdicionalVeiculo(false);
+
+        Hospedagem hospedagem = Hospedagem.builder().
+                id(1L)
+                .dataEntrada(LocalDateTime.now().minusDays(1))
+                .hospede(hospede)
+                .adicionalVeiculo(false)
+                .build();
 
         Page<Hospedagem> page = new PageImpl<>(Collections.singletonList(hospedagem));
         Mockito.when(hospedagemRepository.findByDataSaidaIsNull(any(PageRequest.class))).thenReturn(page);
@@ -115,31 +115,34 @@ class HospedagemServiceTest {
 
     @Test
     void testConferirHospedagemDataSaidaFutura() {
-        HospedagemEntradaDTO dto = new HospedagemEntradaDTO();
-        dto.setDataSaida(LocalDateTime.now().plusDays(1));
-
+        HospedagemEntradaDTO dto = HospedagemEntradaDTO.builder().dataSaida(LocalDateTime.now().plusDays(1)).build();
         assertThrows(RuntimeException.class, () -> hospedagemService.conferirHospedagem(dto));
     }
 
     @Test
     void testConferirHospedagemDataEntradaFutura() {
-        HospedagemEntradaDTO dto = new HospedagemEntradaDTO();
-        dto.setDataEntrada(LocalDateTime.now().plusDays(1));
-
+        HospedagemEntradaDTO dto = HospedagemEntradaDTO.builder().dataSaida(LocalDateTime.now().plusDays(1)).build();
         assertThrows(RuntimeException.class, () -> hospedagemService.conferirHospedagem(dto));
     }
 
     @Test
     void testAtualizarValorTotalSeNecessarioQuandoDatasMudam() throws Exception {
-        HospedagemEntradaDTO dto = new HospedagemEntradaDTO();
-        dto.setDataEntrada(LocalDateTime.now().minusDays(5));
-        dto.setDataSaida(LocalDateTime.now().minusDays(1));
+        HospedagemEntradaDTO dto = HospedagemEntradaDTO.builder()
+                .dataEntrada(LocalDateTime.now().minusDays(5))
+                .dataEntrada(LocalDateTime.now().minusDays(1)).build();
 
         Hospedagem hospedagem = new Hospedagem();
         hospedagem.setDataEntrada(LocalDateTime.now().minusDays(10));
         hospedagem.setDataSaida(LocalDateTime.now().minusDays(7));
 
+        Hospede hospede = new Hospede();
+        hospede.setCpf("12345678901");
+
+        hospedagem.setHospede(hospede);
+        dto.setHospede(hospede.getCpf());
+
         Mockito.when(calculoHospedagemService.calcular(any(Hospedagem.class))).thenReturn(300.0);
+        Mockito.when(hospedeService.findByDocumentoHospede((hospede.getCpf()))).thenReturn(hospede);
 
         Method method = HospedagemService.class.getDeclaredMethod("atualizarValorTotalSeNecessario", Hospedagem.class, HospedagemEntradaDTO.class);
         method.setAccessible(true);
@@ -151,14 +154,16 @@ class HospedagemServiceTest {
 
     @Test
     void testHospedesInativos() {
-        Hospedagem hospedagem = new Hospedagem();
-        hospedagem.setId(1L);
-        hospedagem.setDataEntrada(LocalDateTime.now().minusDays(1));
-        hospedagem.setDataSaida(LocalDateTime.now());
         Hospede hospede = new Hospede();
         hospede.setCpf("12345678901");
-        hospedagem.setHospede(hospede);
-        hospedagem.setAdicionalVeiculo(false);
+
+        Hospedagem hospedagem = Hospedagem.builder().
+                id(1L)
+                .dataEntrada(LocalDateTime.now().minusDays(1))
+                .dataSaida(LocalDateTime.now())
+                .hospede(hospede)
+                .adicionalVeiculo(false)
+                .build();
 
         Page<Hospedagem> page = new PageImpl<>(Collections.singletonList(hospedagem));
         Mockito.when(hospedagemRepository.findByDataSaidaIsNotNull(any(PageRequest.class))).thenReturn(page);

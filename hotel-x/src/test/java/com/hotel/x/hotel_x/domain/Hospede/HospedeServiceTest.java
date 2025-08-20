@@ -1,14 +1,13 @@
 package com.hotel.x.hotel_x.domain.Hospede;
 
+import com.hotel.x.hotel_x.domain.Hospede.dto.HospedeEntradaDTO;
 import com.hotel.x.hotel_x.domain.Hospede.exceptions.HospedeNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
@@ -81,7 +80,10 @@ class HospedeServiceTest {
 
     @Test
     void testVerificacaoHospedeCpfJaCadastrado() {
-        Hospede hospede = new Hospede(null, "João", "12345678901", "11999999999", 0.0, 0.0);
+        HospedeEntradaDTO hospede = new HospedeEntradaDTO();
+        hospede.setCpf("12345678901");
+        hospede.setNome("João");
+        hospede.setTelefone("11999999999");
         Mockito.when(hospedeRepository.existsByCpf("12345678901")).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () -> hospedeService.verificarHospede(hospede));
@@ -89,12 +91,21 @@ class HospedeServiceTest {
 
     @Test
     void testVerificacaoHospedeSucesso() {
-        Hospede hospede = new Hospede(null, "João", "12345678901", "11999999999", 0.0, 0.0);
+        HospedeEntradaDTO hospede = new HospedeEntradaDTO();
+        hospede.setCpf("12345678901");
+        hospede.setNome("João");
+        hospede.setTelefone("11999999999");
+
+        Hospede hospede1 = Hospede.builder()
+                .cpf(hospede.getCpf())
+                .nome(hospede.getNome())
+                .telefone(hospede.getTelefone())
+                .build();
+
         Mockito.when(hospedeRepository.existsByCpf("12345678901")).thenReturn(false);
-        Mockito.when(hospedeRepository.save(hospede)).thenReturn(hospede);
+        Mockito.when(hospedeRepository.save(hospede1)).thenReturn(hospede1);
 
         Hospede result = hospedeService.verificarHospede(hospede);
         assertEquals("João", result.getNome());
     }
-
 }

@@ -15,7 +15,6 @@ public record HospedagemListarDTO(  Long idHospedagem,   String cpf, String nome
     public HospedagemListarDTO(Hospedagem hospedagem){
         this(hospedagem.getId(), hospedagem.getHospede().getCpf(),hospedagem.getHospede().getNome() ,hospedagem.getHospede().getTelefone(), hospedagem.getDataEntrada(), hospedagem.getDataSaida(),
                 hospedagem.getAdicionalVeiculo(), hospedagem.getValorTotal(), hospedagem.getObservacoes());
-
         }
     }
 

@@ -1,7 +1,9 @@
 package com.hotel.x.hotel_x.domain.Hospede.dto;
 
 import com.hotel.x.hotel_x.domain.Hospede.Hospede;
+import lombok.Builder;
 
+@Builder
 public record HospedeListagemDTO(String nome,
                                  String telefone, String cpf, Double valorTotalGasto, Double valorUltimaHospedagem) {
 
