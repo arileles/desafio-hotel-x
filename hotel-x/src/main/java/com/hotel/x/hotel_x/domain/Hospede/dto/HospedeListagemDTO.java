@@ -4,11 +4,11 @@ import com.hotel.x.hotel_x.domain.Hospede.Hospede;
 import lombok.Builder;
 
 @Builder
-public record HospedeListagemDTO(String nome,
+public record HospedeListagemDTO(Long id, String nome,
                                  String telefone, String cpf, Double valorTotalGasto, Double valorUltimaHospedagem) {
 
     public HospedeListagemDTO(Hospede hospede){
-        this(hospede.getNome(), hospede.getTelefone(), hospede.getCpf(), hospede.getValorTotalGasto(), hospede.getValorUltimaHospedagem());
+        this(hospede.getId(), hospede.getNome(), hospede.getTelefone(), hospede.getCpf(), hospede.getValorTotalGasto(), hospede.getValorUltimaHospedagem());
     }
 
 }

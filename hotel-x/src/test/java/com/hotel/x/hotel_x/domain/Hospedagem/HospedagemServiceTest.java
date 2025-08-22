@@ -139,6 +139,7 @@ class HospedagemServiceTest {
         hospede.setCpf("12345678901");
 
         hospedagem.setHospede(hospede);
+        hospedagem.setValorTotal(0.0);
         dto.setHospede(hospede.getCpf());
 
         Mockito.when(calculoHospedagemService.calcular(any(Hospedagem.class))).thenReturn(300.0);
@@ -179,7 +180,14 @@ class HospedagemServiceTest {
         Hospedagem hospedagem = new Hospedagem();
         hospedagem.setId(id);
 
+        Hospede hospede = new Hospede();
+        hospede.setCpf("12345678901");
+        hospedagem.setValorTotal(0.0);
+        hospede.setValorTotalGasto(0.0);
+        hospedagem.setHospede(hospede);
+
         Mockito.when(hospedagemRepository.findById(id)).thenReturn(Optional.of(hospedagem));
+        Mockito.when(hospedeService.findByDocumentoHospede((hospedagem.getHospede().getCpf()))).thenReturn(hospede);
 
         hospedagemService.excluirHospedagem(id);
 

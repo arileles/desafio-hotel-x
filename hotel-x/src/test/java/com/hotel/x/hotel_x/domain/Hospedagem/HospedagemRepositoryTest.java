@@ -75,4 +75,20 @@ class HospedagemRepositoryTest {
             );
         });
     }
+
+    @Test
+        @DisplayName("Deve buscar a última hospedagem pelo CPF do hóspede")
+        void testFindFirstByHospedeCpfOrderByDataSaidaDesc() {
+            Hospede hospede = new Hospede(null, "Teste4", "147.020.120-88", "11966666666", 0.0, 0.0);
+            hospede = hospedeRepository.save(hospede);
+
+            Hospedagem hospedagem1 = new Hospedagem(null, hospede, LocalDateTime.now().minusDays(5), LocalDateTime.now().minusDays(3), false, 150.0, "Primeira");
+            Hospedagem hospedagem2 = new Hospedagem(null, hospede, LocalDateTime.now().minusDays(2), LocalDateTime.now().minusDays(1), false, 250.0, "Última");
+            hospedagemRepository.save(hospedagem1);
+            hospedagemRepository.save(hospedagem2);
+
+            Hospedagem result = hospedagemRepository.findFirstByHospede_CpfOrderByDataSaidaDesc(hospede.getCpf());
+            assertNotNull(result);
+            assertEquals("Última", result.getObservacoes());
+        }
 }

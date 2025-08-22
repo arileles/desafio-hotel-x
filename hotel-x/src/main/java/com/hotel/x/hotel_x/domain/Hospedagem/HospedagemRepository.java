@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,4 +22,6 @@ public interface HospedagemRepository extends JpaRepository<Hospedagem, Long> {
     Page<Hospedagem> findByDataSaidaIsNull(PageRequest of);
 
     List<Hospedagem> findAllByHospede_Cpf(String cpf);
+
+    Hospedagem findFirstByHospede_CpfOrderByDataSaidaDesc(String cpf);
 }
