@@ -26,8 +26,7 @@ h2 {
   color: #3f51b5;
   font-weight: 600;
 }
-
-/* Título do formulário */
+  
 h3 {
   margin-top: 2rem;
   margin-bottom: 1rem;
@@ -52,19 +51,13 @@ p-table {
   text-align: left;
   padding: 0.75rem 0.5rem;
   font-weight: bold; 
-  border-bottom: 1px solid #e0e0e0; /* linha cinza clara entre as linhas */
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .p-datatable-tbody td {
   text-align: left;
   padding: 0.75rem 0.5rem;
   white-space: nowrap;
-}
-
-.p-datatable-tbody td:nth-child(4),
-.p-datatable-tbody td:nth-child(5),
-.p-datatable-tbody td:nth-child(6) {
-  text-align: right;
 }
 
 .p-datatable-tbody tr:nth-child(even) {
@@ -160,7 +153,7 @@ p-inputtextarea textarea:focus {
   letter-spacing: 1px;
 }
 
-.incluir-pessoa-btn {
+.buttons {
   background-color: #1976d2;
   color: #fff;
   font-weight: bold;
@@ -173,6 +166,7 @@ p-inputtextarea textarea:focus {
   transition: background 0.2s;
 }
 
-.incluir-pessoa-btn:hover {
-  background-color: #1565c0;
+.buttons:hover {
+  background: linear-gradient(135deg, #303f9f, #3949ab);
+  transform: translateY(-2px);
 }
