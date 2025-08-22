@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.data.domain.Pageable;
 
 @WebMvcTest(HospedagemController.class)
 class HospedagemControllerTest {
@@ -117,7 +118,7 @@ class HospedagemControllerTest {
     @Test
     void testPutHospedagemAtualizar() throws Exception {
         Hospede hospede = Hospede.builder()
-                .cpf("12345678900")
+                .cpf("540.771.650-08")
                 .nome("Fulano de Tal")
                 .telefone("11999999999").build();
 
@@ -147,5 +148,26 @@ class HospedagemControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void testListarTodasHospedagens() throws Exception {
+        Hospede hospede = new Hospede();
+        hospede.setCpf("12345678901");
+
+        Hospedagem hospedagem = Hospedagem.builder()
+                .id(10L)
+                .dataEntrada(LocalDateTime.now())
+                .adicionalVeiculo(false)
+                .hospede(hospede)
+                .build();
+
+        Page<Hospedagem> page = new PageImpl<>(List.of(hospedagem));
+        Mockito.when(hospedagemRepository.findAll(any(Pageable.class))).thenReturn(page);
+
+        mockMvc.perform(get("/hospedagem"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].idHospedagem").value(10L))
+                .andExpect(jsonPath("$.content[0].cpf").value("12345678901"));
     }
 }

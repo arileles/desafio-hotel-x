@@ -29,13 +29,13 @@ public class HospedagemController {
     @GetMapping("/ativas")
     public ResponseEntity<Page<HospedagemListarDTO>> buscarHospedesAtivos(@PageableDefault(size = 100, sort = "nome") Pageable pageable) {
         Page<Hospedagem> hospedesAtivos = hospedagemService.hospedesAtivos();
-        Page<HospedagemListarDTO> dto =  hospedesAtivos
+        Page<HospedagemListarDTO> dto = hospedesAtivos
                 .map(HospedagemListarDTO::new);
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping
-    public ResponseEntity<HospedagemListarDTO> criarHospedagem(@RequestBody HospedagemEntradaDTO hospedagemEntradaDTO, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity<HospedagemListarDTO> criarHospedagem(@RequestBody HospedagemEntradaDTO hospedagemEntradaDTO, UriComponentsBuilder uriComponentsBuilder) {
         Hospedagem hospedagemSalva = hospedagemService.salvarHospedagem(hospedagemEntradaDTO);
         URI uri = uriComponentsBuilder.path("hospede/{id}").buildAndExpand(hospedagemSalva.getId()).toUri();
         return ResponseEntity.created(uri).build();
@@ -44,19 +44,19 @@ public class HospedagemController {
     @GetMapping("/inativas")
     public ResponseEntity<Page<HospedagemListarDTO>> buscarHospedesInativos(@PageableDefault(size = 100, sort = "nome") Pageable pageable) {
         Page<Hospedagem> hospedesInativos = hospedagemService.hospedesInativos();
-        Page<HospedagemListarDTO> dto =  hospedesInativos
+        Page<HospedagemListarDTO> dto = hospedesInativos
                 .map(HospedagemListarDTO::new);
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<Stream<Object>> buscarHospedagemPorHospede(@PathVariable String cpf){
-        Stream<Object> dto =  hospedagemRepository.findAllByHospede_Cpf(cpf).stream().map(HospedagemListarDTO::new);
+    public ResponseEntity<Stream<Object>> buscarHospedagemPorHospede(@PathVariable String cpf) {
+        Stream<Object> dto = hospedagemRepository.findAllByHospede_Cpf(cpf).stream().map(HospedagemListarDTO::new);
         return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<HospedagemListarDTO> atualizarHospedagem(@PathVariable Long id, @RequestBody HospedagemEntradaDTO hospedagemEntradaDTO){
+    public ResponseEntity<HospedagemListarDTO> atualizarHospedagem(@PathVariable Long id, @RequestBody HospedagemEntradaDTO hospedagemEntradaDTO) {
         return ResponseEntity.ok(hospedagemService.atualizarHospedagem(hospedagemEntradaDTO, id));
     }
 
@@ -64,5 +64,12 @@ public class HospedagemController {
     public ResponseEntity<Void> deletarHospedagem(@PathVariable Long id) {
         hospedagemService.excluirHospedagem(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<HospedagemListarDTO>> listarTodasHospedagens(@PageableDefault(size = 100, sort = "id") Pageable pageable) {
+        Page<Hospedagem> hospedagens = hospedagemRepository.findAll(pageable);
+        Page<HospedagemListarDTO> dto = hospedagens.map(HospedagemListarDTO::new);
+        return ResponseEntity.ok(dto);
     }
 }
