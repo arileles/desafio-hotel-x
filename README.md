@@ -14,7 +14,7 @@
         <h2>Configuração do Banco de Dados</h2>
         <p>O projeto utiliza o Flyway para gerenciar as migrações do banco de dados.</p>
         <h2>Endpoints da API (Backend)</h2>
-        <p>A API RESTful do backend oferece os seguintes endpoints:</p>
+        <p>A API RESTful do backend oferece os seguintes endpoints (neste repositório tem todas elas prontas para baixar no postman):</p>
         <h3>Hóspedes (<code>/hospede</code>)</h3>
         <ul>
             <li><code>GET /hospede</code>: Listar todos os hóspedes.</li>
