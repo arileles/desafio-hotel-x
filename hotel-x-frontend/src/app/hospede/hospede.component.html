@@ -1,57 +1,27 @@
-<h2>Lista de Hóspedes</h2>
-
-<p-table [value]="hospedes" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
-  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}">
-  <ng-template pTemplate="header">
-    <tr>
-      <th>Nome</th>
-      <th>CPF</th>
-      <th>Telefone</th>
-      <th>Valor Total Gasto</th>
-      <th>Valor Última Hospedagem</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-hospede>
-    <tr>
-      <td>{{ hospede.nome }}</td>
-      <td>{{ hospede.cpf }}</td>
-      <td>{{ hospede.telefone }}</td>
-      <td>{{ hospede.valorTotalGasto | currency:'BRL' }}</td>
-      <td>{{ hospede.valorUltimaHospedagem | currency:'BRL' }}</td>
-    </tr>
-  </ng-template>
-</p-table>
-
-<h3>Adicionar Novo Hóspede</h3>
-<div class="p-fluid p-formgrid p-grid">
-  <div class="p-field p-col-12 p-md-6">
-    <label for="nome">Nome</label>
-    <input id="nome" type="text" pInputText [(ngModel)]="novoHospede.nome" placeholder="Nome do hóspede" />
-  </div>
-
-  <div class="p-field p-col-12 p-md-6">
-    <label for="cpf">CPF</label>
-    <input id="cpf" type="text" pInputText [(ngModel)]="novoHospede.cpf" placeholder="CPF do hóspede" />
-  </div>
-
-  <div class="p-field p-col-12 p-md-6">
-    <label for="telefone">Telefone</label>
-    <input id="telefone" type="text" pInputText [(ngModel)]="novoHospede.telefone" placeholder="Telefone do hóspede" />
-  </div>
-
-  <div class="p-field p-col-12 p-md-6">
-    <label for="valorTotalGasto">Valor Total Gasto</label>
-    <input id="valorTotalGasto" type="number" pInputNumber [(ngModel)]="novoHospede.valorTotalGasto" mode="currency"
-      currency="BRL" locale="pt-BR" />
-  </div>
-
-  <div class="p-field p-col-12 p-md-6">
-    <label for="valorUltimaHospedagem">Valor Última Hospedagem</label>
-    <input id="valorUltimaHospedagem" type="number" pInputNumber [(ngModel)]="novoHospede.valorUltimaHospedagem"
-      mode="currency" currency="BRL" locale="pt-BR" />
-  </div>
-
-  <div class="p-field p-col-12">
-    <button pButton type="button" label="Adicionar" icon="pi pi-plus" (click)="adicionarHospede()"></button>
+<div class="main-container">
+  <div class="content-container">
+    
+<button pButton type="button" label="Incluir pessoa" icon="pi pi-user-plus" class="incluir-pessoa-btn" (click)="mostrarFormulario = !mostrarFormulario"></button>
+  <div *ngIf="mostrarFormulario">
+    <div class="painel p-4">
+      <h3 class="mb-3"> </h3>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12 p-md-6">
+          <label for="nome">Nome</label>
+          <input id="nome" type="text" pInputText [(ngModel)]="novoHospede.nome" placeholder="Nome do hóspede" />
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <label for="cpf">CPF</label>
+          <input id="cpf" type="text" pInputText [(ngModel)]="novoHospede.cpf" placeholder="CPF do hóspede" />
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <label for="telefone">Telefone</label>
+          <input id="telefone" type="text" pInputText [(ngModel)]="novoHospede.telefone" placeholder="Telefone do hóspede" />
+        </div>
+        <div class="p-field p-col-12">
+          <button pButton type="button" label="Salvar" icon="pi pi-plus" (click)="adicionarHospede()"></button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

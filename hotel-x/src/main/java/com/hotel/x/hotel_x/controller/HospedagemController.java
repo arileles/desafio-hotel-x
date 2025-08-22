@@ -16,7 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.stream.Stream;
 
-
 @RestController
 @RequestMapping("hospedagem")
 public class HospedagemController {
@@ -28,7 +27,7 @@ public class HospedagemController {
     private HospedagemRepository hospedagemRepository;
 
     @GetMapping("/ativas")
-    public ResponseEntity<Page<HospedagemListarDTO>> buscarHospedesAtivos(@PageableDefault(size = 10, sort = "nome") Pageable pageable) {
+    public ResponseEntity<Page<HospedagemListarDTO>> buscarHospedesAtivos(@PageableDefault(size = 100, sort = "nome") Pageable pageable) {
         Page<Hospedagem> hospedesAtivos = hospedagemService.hospedesAtivos();
         Page<HospedagemListarDTO> dto =  hospedesAtivos
                 .map(HospedagemListarDTO::new);
@@ -43,7 +42,7 @@ public class HospedagemController {
     }
 
     @GetMapping("/inativas")
-    public ResponseEntity<Page<HospedagemListarDTO>> buscarHospedesInativos(@PageableDefault(size = 10, sort = "nome") Pageable pageable) {
+    public ResponseEntity<Page<HospedagemListarDTO>> buscarHospedesInativos(@PageableDefault(size = 100, sort = "nome") Pageable pageable) {
         Page<Hospedagem> hospedesInativos = hospedagemService.hospedesInativos();
         Page<HospedagemListarDTO> dto =  hospedesInativos
                 .map(HospedagemListarDTO::new);

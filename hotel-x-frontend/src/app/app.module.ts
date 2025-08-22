@@ -11,13 +11,17 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { PaginatorModule } from 'primeng/paginator';
 import { CardModule } from 'primeng/card';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { CheckboxModule } from 'primeng/checkbox';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 // Seu componente principal
 import { AppComponent } from './app.component';
 import { HospedeComponent } from './hospede/hospede.component';
+import { HospedagemComponent } from './hospedagem/hospedagem.component';
 
 @NgModule({
-  declarations: [AppComponent, HospedeComponent],
+  declarations: [AppComponent, HospedeComponent, HospedagemComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -29,6 +33,9 @@ import { HospedeComponent } from './hospede/hospede.component';
     InputNumberModule,
     PaginatorModule,
     CardModule,
+    RadioButtonModule,
+    CheckboxModule,
+    InputTextareaModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

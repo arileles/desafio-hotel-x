@@ -25,7 +25,7 @@ public class HospedagemService {
     private CalculoHospedagemService calculoHospedagemService;
 
     public Page<Hospedagem> hospedesAtivos() {
-        return hospedagemRepository.findByDataSaidaIsNull(PageRequest.of(0, 10));
+        return hospedagemRepository.findByDataSaidaIsNull(PageRequest.of(0, 100));
     }
 
     public HospedagemEntradaDTO conferirHospedagem(HospedagemEntradaDTO hospedagem) {
@@ -83,7 +83,7 @@ public class HospedagemService {
     }
 
     public Page<Hospedagem> hospedesInativos() {
-        return hospedagemRepository.findByDataSaidaIsNotNull(PageRequest.of(0, 10));
+        return hospedagemRepository.findByDataSaidaIsNotNull(PageRequest.of(0, 100));
     }
 
     public HospedagemListarDTO atualizarHospedagem(HospedagemEntradaDTO hospedagemEntradaDTO, Long id) {

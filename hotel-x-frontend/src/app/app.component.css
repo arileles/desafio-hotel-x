@@ -1,0 +1,21 @@
+.header-banner-verde {
+  display: flex;
+  align-items: center;
+  background-color: #295350;
+  padding: 16px 32px;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 24px;
+  border-radius: 8px 8px 0 0;
+}
+
+.logo-banner {
+  height: 48px;
+  margin-right: 16px;
+}
+
+.titulo-banner {
+  font-size: 2rem;
+  font-weight: 600;
+}

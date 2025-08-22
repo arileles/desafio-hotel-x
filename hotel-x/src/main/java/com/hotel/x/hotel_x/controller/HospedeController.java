@@ -45,7 +45,7 @@ public class HospedeController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<HospedeListagemDTO>> buscarTodosOsHospedes(@PageableDefault(size = 10, sort = "nome") Pageable pageable) {
+    public ResponseEntity<Page<HospedeListagemDTO>> buscarTodosOsHospedes(@PageableDefault(size = 100, sort = "nome") Pageable pageable) {
         return ResponseEntity.ok(hospedeService.buscarTodosOsHospedes(pageable));
     }
 

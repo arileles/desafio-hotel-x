@@ -1,1 +1,178 @@
-/* You can add global styles to this file, and also import other style files */
+.main-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.content-container {
+  width: 100%;
+  max-width: 900px;
+}
+
+.painel {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid #1976d2; /* Linha fina azul */
+}
+/* ================= Títulos ================= */
+
+/* Título principal */
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #3f51b5;
+  font-weight: 600;
+}
+
+/* Título do formulário */
+h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: #555;
+  font-weight: 500;
+}
+
+
+/* ================= Tabela ================= */
+
+p-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.p-datatable-thead th {
+  color: #000000;
+  font-weight: 500;
+  text-align: left;
+  padding: 0.75rem 0.5rem;
+  font-weight: bold; 
+  border-bottom: 1px solid #e0e0e0; /* linha cinza clara entre as linhas */
+}
+
+.p-datatable-tbody td {
+  text-align: left;
+  padding: 0.75rem 0.5rem;
+  white-space: nowrap;
+}
+
+.p-datatable-tbody td:nth-child(4),
+.p-datatable-tbody td:nth-child(5),
+.p-datatable-tbody td:nth-child(6) {
+  text-align: right;
+}
+
+.p-datatable-tbody tr:nth-child(even) {
+  background-color: #f1f1f1;
+}
+
+.p-datatable-tbody tr:hover {
+  background-color: #e8eaf6;
+  transition: 0.2s;
+}
+
+/* ================= Formulário ================= */
+
+.p-formgrid.p-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.p-field {
+  flex: 1 1 calc(50% - 1rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.p-field.p-checkbox-field {
+  flex-direction: row;
+  align-items: center;
+}
+
+.p-field.p-checkbox-field p-checkbox {
+  margin-right: 0.5rem;
+}
+
+.p-field label {
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.p-inputtext,
+.p-inputnumber input,
+input[type="datetime-local"],
+p-inputtextarea textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.p-inputtext:focus,
+.p-inputnumber input:focus,
+input[type="datetime-local"]:focus,
+p-inputtextarea textarea:focus {
+  border-color: #3f51b5;
+  box-shadow: 0 0 5px rgba(63, 81, 181, 0.3);
+}
+
+/* ================= Botão ================= */
+
+.p-field.p-col-12 button[pButton] {
+  margin-top: 1rem;
+  align-self: flex-start;
+  font-size: 0.9rem;
+  padding: 0.4rem 1rem;
+  background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.p-field.p-col-12 button[pButton]:hover {
+  background: linear-gradient(135deg, #303f9f, #3949ab);
+  transform: translateY(-2px);
+}
+
+.consultas-banner {
+  background-color: #1976d2;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  text-align: left;
+  margin-top: 1rem;
+  margin-bottom: 0; /* Sem margem inferior */
+  letter-spacing: 1px;
+}
+
+.incluir-pessoa-btn {
+  background-color: #1976d2;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: background 0.2s;
+}
+
+.incluir-pessoa-btn:hover {
+  background-color: #1565c0;
+}
