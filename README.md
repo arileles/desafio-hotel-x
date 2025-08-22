@@ -30,7 +30,7 @@
             <li><code>GET /hospedagem/ativas</code>: Consultar hóspedes que ainda estão no hotel.</li>
             <li><code>GET /hospedagem/inativas</code>: Consultar hóspedes que já deixaram o hotel.</li>
             <li><code>GET /hospedagem/{cpf}</code>: Buscar hospedagens por CPF do hóspede.</li>
-           <li><code>GET  /hospedagem/</code>: Buscar todas as hospedagens.</li>
+           <li><code>GET  /hospedagem</code>: Buscar todas as hospedagens.</li>
             <li><code>POST /hospedagem</code>: Realizar check-in (e opcionalmente check-out).</li>
             <li><code>PUT /hospedagem/{id}</code>: Atualizar uma hospedagem.</li>
             <li><code>DELETE /hospedagem/{id}</code>: Deletar uma hospedagem.</li>
